@@ -3,6 +3,7 @@ module Main where
 import Day01 (countIncreases)
 import Day01Part02 (countIncreasedSums)
 import Day02 (submarineDrive)
+import Day02Part02 (submarineDriveAim)
 import System.IO
 
 main :: IO ()
@@ -10,7 +11,17 @@ main = do
   day01
   day01Part2
   day02
+  day02Part02
   where
+    day02Part02 :: IO ()
+    day02Part02 = do
+      input <- readFileContents "app/day02_input.txt"
+      let result = submarineDriveAim input
+      putStr "Day 02/Part02: "
+      print result
+      putStr " -> "
+      print (uncurry (*) result)
+
     day02 :: IO ()
     day02 = do
       input <- readFileContents "app/day02_input.txt"
