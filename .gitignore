@@ -1,2 +1,5 @@
 .stack-work/
 *~
+out/
+dist-newstyle/
+*.cabal
