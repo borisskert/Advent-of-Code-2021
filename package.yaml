@@ -38,3 +38,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - Advent-of-Code-y2021
+    - hspec == 2.7.10
