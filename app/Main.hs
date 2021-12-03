@@ -5,6 +5,7 @@ import Day01Part02 (countIncreasedSums)
 import Day02 (submarineDrive)
 import Day02Part02 (submarineDriveAim)
 import Day03 (powerConsumption)
+import Day03Part02 (lifeSupportRating)
 import System.IO
 
 main :: IO ()
@@ -14,7 +15,17 @@ main = do
   day02
   day02Part02
   day03
+  day03Part02
   where
+    day03Part02 :: IO ()
+    day03Part02 = do
+      input <- readFileContents "app/day03_input.txt"
+      let result = lifeSupportRating input
+      putStr "Day 03/Part 02: "
+      print result
+      putStr " -> "
+      print (uncurry (*) result)
+  
     day03 :: IO ()
     day03 = do
       input <- readFileContents "app/day03_input.txt"
@@ -28,7 +39,7 @@ main = do
     day02Part02 = do
       input <- readFileContents "app/day02_input.txt"
       let result = submarineDriveAim input
-      putStr "Day 02/Part02: "
+      putStr "Day 02/Part 02: "
       print result
       putStr " -> "
       print (uncurry (*) result)
