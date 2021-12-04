@@ -6,6 +6,7 @@ import Day02 (submarineDrive)
 import Day02Part02 (submarineDriveAim)
 import Day03 (powerConsumption)
 import Day03Part02 (lifeSupportRating)
+import Day04 (playSubmarineBingo)
 import System.IO
 
 main :: IO ()
@@ -16,7 +17,17 @@ main = do
   day02Part02
   day03
   day03Part02
+  day04
   where
+    day04 :: IO ()
+    day04 = do
+        input <- readFileContents "app/day04_input.txt"
+        let result = playSubmarineBingo input
+        putStr "Day 04: "
+        print result
+        putStr " -> "
+        print (uncurry (*) result)
+
     day03Part02 :: IO ()
     day03Part02 = do
       input <- readFileContents "app/day03_input.txt"
