@@ -2,6 +2,8 @@
 
 module Day05 where
 
+-- https://adventofcode.com/2021/day/5
+
 import Data.List (nub)
 import Data.List.Split (splitOn)
 import Debug.Trace (traceShow)

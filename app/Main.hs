@@ -9,44 +9,53 @@ import Day03Part02 (lifeSupportRating)
 import Day04 (playSubmarineBingo)
 import Day04Part02 (letSquidWin)
 import Day05 (overlap)
+import Day05Part02 (overlapDiagonal)
 import System.IO
 
 main :: IO ()
 main = do
-  day01
-  day01Part2
-  day02
-  day02Part02
-  day03
-  day03Part02
-  day04
-  day04Part02
+  day05Part02
   day05
+  day04Part02
+  day04
+  day03Part02
+  day03
+  day02Part02
+  day02
+  day01Part2
+  day01
   where
+    day05Part02 :: IO ()
+    day05Part02 = do
+      input <- readFileContents "app/day05_input.txt"
+      let result = overlapDiagonal input
+      putStr "Day 05/Part 02: -> "
+      print result
+
     day05 :: IO ()
     day05 = do
-        input <- readFileContents "app/day05_input.txt"
-        let result = overlap input
-        putStr "Day 05: -> "
-        print result
-    
+      input <- readFileContents "app/day05_input.txt"
+      let result = overlap input
+      putStr "Day 05: -> "
+      print result
+
     day04Part02 :: IO ()
     day04Part02 = do
-        input <- readFileContents "app/day04_input.txt"
-        let result = letSquidWin input
-        putStr "Day 04/Part 02: "
-        print result
-        putStr " -> "
-        print (uncurry (*) result)
+      input <- readFileContents "app/day04_input.txt"
+      let result = letSquidWin input
+      putStr "Day 04/Part 02: "
+      print result
+      putStr " -> "
+      print (uncurry (*) result)
 
     day04 :: IO ()
     day04 = do
-        input <- readFileContents "app/day04_input.txt"
-        let result = playSubmarineBingo input
-        putStr "Day 04: "
-        print result
-        putStr " -> "
-        print (uncurry (*) result)
+      input <- readFileContents "app/day04_input.txt"
+      let result = playSubmarineBingo input
+      putStr "Day 04: "
+      print result
+      putStr " -> "
+      print (uncurry (*) result)
 
     day03Part02 :: IO ()
     day03Part02 = do
@@ -56,7 +65,7 @@ main = do
       print result
       putStr " -> "
       print (uncurry (*) result)
-  
+
     day03 :: IO ()
     day03 = do
       input <- readFileContents "app/day03_input.txt"
