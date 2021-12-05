@@ -8,6 +8,7 @@ import Day03 (powerConsumption)
 import Day03Part02 (lifeSupportRating)
 import Day04 (playSubmarineBingo)
 import Day04Part02 (letSquidWin)
+import Day05 (overlap)
 import System.IO
 
 main :: IO ()
@@ -20,7 +21,15 @@ main = do
   day03Part02
   day04
   day04Part02
+  day05
   where
+    day05 :: IO ()
+    day05 = do
+        input <- readFileContents "app/day05_input.txt"
+        let result = overlap input
+        putStr "Day 05: -> "
+        print result
+    
     day04Part02 :: IO ()
     day04Part02 = do
         input <- readFileContents "app/day04_input.txt"
