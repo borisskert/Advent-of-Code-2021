@@ -11,22 +11,31 @@ import Day04Part02 (letSquidWin)
 import Day05 (overlap)
 import Day05Part02 (overlapDiagonal)
 import Day06 (simulateLanternfish)
+import Day06Part02 (simulateLanternfishExtended)
 import System.IO
 
 main :: IO ()
 main = do
-  day06
-  day05Part02
-  day05
-  day04Part02
-  day04
-  day03Part02
-  day03
-  day02Part02
-  day02
-  day01Part2
+  -- day06Part02
+  -- day06
+  -- day05Part02
+  -- day05
+  -- day04Part02
+  -- day04
+  -- day03Part02
+  -- day03
+  -- day02Part02
+  -- day02
+  -- day01Part2
   day01
   where
+    day06Part02 :: IO ()
+    day06Part02 = do
+      input <- readFileContents "app/day06_input.txt"
+      let result = simulateLanternfishExtended 256 input
+      putStr "Day 06/Part02: -> "
+      print result
+    
     day06 :: IO ()
     day06 = do
       input <- readFileContents "app/day06_input.txt"
