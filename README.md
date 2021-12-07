@@ -16,6 +16,21 @@ stack test
 ```
 
 ## Run main
+
+### Run default puzzles (not the long running ones)
+
 ```shell
 stack run
+```
+
+### Run specific puzzle
+
+```shell
+stack run day06
+```
+
+### Run all puzzles (take a long time)
+
+```shell
+stack run all
 ```

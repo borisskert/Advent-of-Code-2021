@@ -14,6 +14,7 @@ description:         Please see the README on GitHub at <https://github.com/bori
 dependencies:
 - base >= 4.7 && < 5
 - split == 0.2.3.4
+- containers == 0.6.5.*
 
 library:
   source-dirs: src
