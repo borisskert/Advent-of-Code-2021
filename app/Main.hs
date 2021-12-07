@@ -12,10 +12,12 @@ import Day05 (overlap)
 import Day05Part02 (overlapDiagonal)
 import Day06 (simulateLanternfish)
 import Day06Part02 (simulateLanternfishExtended)
+import Day07 (cheapestPossibleOutcome)
 import System.IO
 
 main :: IO ()
 main = do
+  day07
   -- day06Part02
   -- day06
   -- day05Part02
@@ -29,6 +31,13 @@ main = do
   -- day01Part2
   day01
   where
+    day07 :: IO ()
+    day07 = do
+      input <- readFileContents "app/day07_input.txt"
+      let result = cheapestPossibleOutcome input
+      putStr "Day 07: -> "
+      print result
+
     day06Part02 :: IO ()
     day06Part02 = do
       input <- readFileContents "app/day06_input.txt"
