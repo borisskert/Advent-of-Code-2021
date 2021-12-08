@@ -16,6 +16,7 @@ import Day06 (simulateLanternfish)
 import Day06Part02 (simulateLanternfishExtended)
 import Day07 (cheapestPossibleOutcome)
 import Day07Part02 (cheapestPossibleOutcomeExtended)
+import Day08 (digitsAppear)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -23,6 +24,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day08",
+          friendlyName = "Day 08",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day08_input.txt"
+            let result = digitsAppear [1, 4, 7, 8] input
+            print result
+        }
+    ),
+    ( Day
         { name = "day07part02",
           friendlyName = "Day 07/Part 02",
           isDefault = True,
