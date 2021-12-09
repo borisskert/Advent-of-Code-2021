@@ -19,6 +19,7 @@ import Day07Part02 (cheapestPossibleOutcomeExtended)
 import Day08 (digitsAppear)
 import Day08Part02 (summarizeDigits)
 import Day09 (riskLevel)
+import Day09Part02 (largestBasins)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -26,6 +27,17 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day09part02",
+          friendlyName = "Day 09/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day09_input.txt"
+            let result = largestBasins input
+            print result
+            putStr " --> "
+            print (product result)
+        }
+    ),( Day
         { name = "day09",
           friendlyName = "Day 09",
           isDefault = True,
