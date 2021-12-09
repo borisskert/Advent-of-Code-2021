@@ -18,6 +18,7 @@ import Day07 (cheapestPossibleOutcome)
 import Day07Part02 (cheapestPossibleOutcomeExtended)
 import Day08 (digitsAppear)
 import Day08Part02 (summarizeDigits)
+import Day09 (riskLevel)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -25,6 +26,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day09",
+          friendlyName = "Day 09",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day09_input.txt"
+            let result = riskLevel input
+            print result
+        }
+    ),
+    ( Day
         { name = "day08part02",
           friendlyName = "Day 08/Part 02",
           isDefault = True,
