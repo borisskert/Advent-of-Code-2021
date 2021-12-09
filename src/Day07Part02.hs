@@ -3,7 +3,6 @@ module Day07Part02 where
 -- https://adventofcode.com/2021/day/7#part2
 
 import Day07 (parseInput)
-import Debug.Trace (traceShow)
 
 cheapestPossibleOutcomeExtended :: String -> Int
 cheapestPossibleOutcomeExtended input =
