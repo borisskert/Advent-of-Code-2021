@@ -2,7 +2,7 @@
 
 module Day05Part02 where
 
-import Data.List (nub)
+import Data.List (nub, sort, group)
 import Day05 (parseInput)
 
 -- https://adventofcode.com/2021/day/5#part2
@@ -21,11 +21,8 @@ extract ((x1, y1), (x2, y2))
       | x1 < x2 && y1 > y2 = zip [x1 .. x2] [y1, (y1 - 1) .. y2]
       | x1 > x2 && y1 < y2 = zip [x2 .. x1] [y2, (y2 - 1) .. y1]
 
-count :: [(Int, Int)] -> [((Int, Int), Int)]
-count xs = map withCount . nub $ xs
-  where
-    withCount x = (x,) . length . filter (== x) $ xs
-    withCount :: (Int, Int) -> ((Int, Int), Int)
-
 overlapDiagonal :: String -> Int
-overlapDiagonal = length . filter (> 1) . map snd . count . concatMap extract . parseInput
+overlapDiagonal = length . filter (> 1) . count . concatMap extract . parseInput
+  where
+    count :: [(Int, Int)] -> [Int]
+    count = map length . group . sort

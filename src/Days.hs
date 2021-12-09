@@ -90,7 +90,7 @@ days =
     ( Day
         { name = "day06part02",
           friendlyName = "Day 06/Part02",
-          isDefault = False,
+          isDefault = True,
           run = do
             input <- readFileContents "app/day06_input.txt"
             let result = simulateLanternfishExtended 256 input
@@ -100,7 +100,7 @@ days =
     ( Day
         { name = "day06",
           friendlyName = "Day 06",
-          isDefault = False,
+          isDefault = True,
           run = do
             input <- readFileContents "app/day06_input.txt"
             let result = simulateLanternfish 80 input
@@ -110,7 +110,7 @@ days =
     ( Day
         { name = "day05part02",
           friendlyName = "Day 05/Part 02",
-          isDefault = False,
+          isDefault = True,
           run = do
             input <- readFileContents "app/day05_input.txt"
             let result = overlapDiagonal input
@@ -120,7 +120,7 @@ days =
     ( Day
         { name = "day05",
           friendlyName = "Day 05",
-          isDefault = False,
+          isDefault = True,
           run = do
             input <- readFileContents "app/day05_input.txt"
             let result = overlap input

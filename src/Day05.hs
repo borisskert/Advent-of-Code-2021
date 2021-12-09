@@ -4,9 +4,8 @@ module Day05 where
 
 -- https://adventofcode.com/2021/day/5
 
-import Data.List (nub)
+import Data.List (group, sort)
 import Data.List.Split (splitOn)
-import Debug.Trace (traceShow)
 
 parseInput :: String -> [((Int, Int), (Int, Int))]
 parseInput = map ((\x -> (head x, last x)) . map toTuple . splitOn " -> ") . lines
@@ -33,10 +32,7 @@ extract ((x1, y1), (x2, y2))
       | otherwise = [(x1, y1)]
 
 overlap :: String -> Int
-overlap = length . filter (> 1) . map snd . count . concatMap extract . parseInput
+overlap = length . filter (> 1) . count . concatMap extract . parseInput
   where
-    count :: [(Int, Int)] -> [((Int, Int), Int)]
-    count xs = map withCount . nub $ xs
-      where
-        withCount x = (x,) . length . filter (== x) $ xs
-        withCount :: (Int, Int) -> ((Int, Int), Int)
+    count :: [(Int, Int)] -> [Int]
+    count = map length . group . sort
