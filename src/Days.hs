@@ -20,6 +20,7 @@ import Day08 (digitsAppear)
 import Day08Part02 (summarizeDigits)
 import Day09 (riskLevel)
 import Day09Part02 (largestBasins)
+import Day10 (syntaxErrorScore)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -27,6 +28,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day10",
+          friendlyName = "Day 10",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day10_input.txt"
+            let result = syntaxErrorScore input
+            print result
+        }
+    ),
+    ( Day
         { name = "day09part02",
           friendlyName = "Day 09/Part 02",
           isDefault = True,
@@ -37,7 +48,8 @@ days =
             putStr " --> "
             print (product result)
         }
-    ),( Day
+    ),
+    ( Day
         { name = "day09",
           friendlyName = "Day 09",
           isDefault = True,
