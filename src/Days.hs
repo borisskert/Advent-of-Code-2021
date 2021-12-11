@@ -22,6 +22,7 @@ import Day09 (riskLevel)
 import Day09Part02 (largestBasins)
 import Day10 (syntaxErrorScore)
 import Day10Part02 (middleScore)
+import Day11 (totalFlashes)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -29,6 +30,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day11",
+          friendlyName = "Day 11",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day11_input.txt"
+            let result = totalFlashes input 100
+            print result
+        }
+    ),
+    ( Day
         { name = "day10part02",
           friendlyName = "Day 10/Part 02",
           isDefault = True,
