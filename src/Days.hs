@@ -25,6 +25,7 @@ import Day10Part02 (middleScore)
 import Day11 (totalFlashes)
 import Day11Part02 (flashSimultaneously)
 import Day12 (howManyPaths)
+import Day12Part02 (howManyPathsV2)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -32,6 +33,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day12part02",
+          friendlyName = "Day 12/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day12_input.txt"
+            let result = howManyPathsV2 input
+            print result
+        }
+    ),
+    ( Day
         { name = "day12",
           friendlyName = "Day 12",
           isDefault = True,
