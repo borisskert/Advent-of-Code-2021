@@ -1,5 +1,7 @@
 module Day13 where
 
+-- https://adventofcode.com/2021/day/13
+
 import Data.List (nub)
 import Data.List.Split (splitOn)
 

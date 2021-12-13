@@ -27,6 +27,7 @@ import Day11Part02 (flashSimultaneously)
 import Day12 (howManyPaths)
 import Day12Part02 (howManyPathsV2)
 import Day13 (howManyDots)
+import Day13Part02 (printDots)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -34,6 +35,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day13part02",
+          friendlyName = "Day 13/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day13_input.txt"
+            let result = "\n" ++ printDots input
+            putStrLn result
+        }
+    ),
+    ( Day
         { name = "day13",
           friendlyName = "Day 13",
           isDefault = True,
