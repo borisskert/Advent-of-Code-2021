@@ -28,6 +28,7 @@ import Day12 (howManyPaths)
 import Day12Part02 (howManyPathsV2)
 import Day13 (howManyDots)
 import Day13Part02 (printDots)
+import Day14 (polymerElements)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -35,6 +36,18 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day14",
+          friendlyName = "Day 14",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day14_input.txt"
+            let result = polymerElements input
+            print result
+            putStr " --> "
+            print (uncurry (-) result)
+        }
+    ),
+    ( Day
         { name = "day13part02",
           friendlyName = "Day 13/Part 02",
           isDefault = True,
