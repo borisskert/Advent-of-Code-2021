@@ -16,7 +16,7 @@ data Field = Field {size :: Size, points :: Map Position Point} deriving (Eq, Sh
 
 data Position = Position {x :: Int, y :: Int} deriving (Eq, Show, Ord)
 
-data Point = Point {position :: Position, riskLevel :: Int, neighbors :: [Position]} deriving (Eq, Show)
+data Point = Point {position :: Position, riskLevel :: Int, neighbors :: [Position], distance :: Int} deriving (Eq, Show)
 
 toField :: [[Int]] -> Field
 toField values = (\m -> Field {size = size, points = m}) . fromList . mapFromInts 0 $ values
@@ -29,7 +29,7 @@ toField values = (\m -> Field {size = size, points = m}) . fromList . mapFromInt
       where
         points =
           map
-            ( (\pos -> (pos, Point {position = pos, riskLevel = line !! x pos, neighbors = makeNeighbors size pos}))
+            ( (\pos -> (pos, Point {position = pos, riskLevel = line !! x pos, neighbors = makeNeighbors size pos, distance = 0}))
                 . (\x -> (Position {x = x, y = i}))
             )
             [0 .. (width size - 1)] ::
@@ -93,34 +93,16 @@ bestRouteTo routes pos = head . sortOn riskLevelOf $ neighboredRoutes routes pos
 risklevels :: Route -> [Int]
 risklevels Route {route = route} = map riskLevel route
 
-lowestTotal :: String -> Int
-lowestTotal input = (+ (- riskLevelStart)) . minimum . map riskLevelOf $ foundRoutes
+findBestRoute :: Field -> Route
+findBestRoute field = head . sortOn riskLevelOf $ foundRoutes
   where
-    field = toField . parseInput $ input :: Field
     sizeOfField = size field :: Size
-    startPosition = Position {x = 0, y = 0} :: Position
-    start = lookupPoint field startPosition :: Point
-    riskLevelStart = riskLevel start :: Int
-
     endPosition = Position {x = width sizeOfField - 1, y = height sizeOfField - 1}
 
-    initialRoute = newRoute start :: Route
-
-    foundRoutes = head . map finishedRoutes . dropWhile hasOpenRoutes . iterate extendRoutes $ ([initialRoute], [], []) :: [Route]
-
-    hasOpenRoutes :: ([Route], [Route], [Route]) -> Bool
-    hasOpenRoutes (o, _, _) = not . null $ o
-
-    finishedRoutes :: ([Route], [Route], [Route]) -> [Route]
-    finishedRoutes (_, f, _) = f
-
-    append :: Route -> Position -> Route
-    append Route {route = points, visited = visited} position = Route {route = points ++ [point], visited = visited}
-      where
-        point = lookupPoint field position
-
-    extendRoutes :: ([Route], [Route], [Route]) -> ([Route], [Route], [Route])
-    extendRoutes (openRoutes, finishedRoutes, stuckRoutes) = (newOpenRoutes, newFinishedRoutes, newStuckRoutes)
+    findRoutes :: ([Route], [Route], [Route]) -> ([Route], [Route], [Route])
+    findRoutes (openRoutes, finishedRoutes, stuckRoutes)
+      | null openRoutes = (openRoutes, finishedRoutes, stuckRoutes)
+      | otherwise  = findRoutes (newOpenRoutes, newFinishedRoutes, newStuckRoutes)
       where
         potentialNeigbors = filter (not . isOnAnyRoute (finishedRoutes ++ stuckRoutes)) . getRoutesNeighbors $ openRoutes :: [Position]
 
@@ -138,8 +120,36 @@ lowestTotal input = (+ (- riskLevelStart)) . minimum . map riskLevelOf $ foundRo
           where
             otherRoutes = newOpenRoutes ++ newFinishedRoutes ++ stuckRoutes :: [Route]
 
-    isFinished :: Route -> Bool
-    isFinished route = isOnRoute route endPosition
+        isFinished :: Route -> Bool
+        isFinished route = isOnRoute route endPosition
 
-    areFinished :: [Route] -> Bool
-    areFinished = all isFinished
+    append :: Route -> Position -> Route
+    append Route {route = points, visited = visited} position = Route {route = points ++ [point], visited = visited}
+      where
+        point = lookupPoint field position
+
+    startPosition = Position {x = 0, y = 0} :: Position
+    start = lookupPoint field startPosition :: Point
+
+    initialRoute = newRoute start :: Route
+
+    foundRoutes = finishedRoutes . findRoutes $ ([initialRoute], [], []) :: [Route]
+
+    hasOpenRoutes :: ([Route], [Route], [Route]) -> Bool
+    hasOpenRoutes (o, _, _) = not . null $ o
+
+    finishedRoutes :: ([Route], [Route], [Route]) -> [Route]
+    finishedRoutes (_, f, _) = f
+
+riskLevelAtStart :: Field -> Int
+riskLevelAtStart field = riskLevel start
+  where
+    startPosition = Position {x = 0, y = 0} :: Position
+    start = lookupPoint field startPosition :: Point
+    riskLevelStart = riskLevel start :: Int
+
+lowestTotal :: String -> Int
+lowestTotal input = (+ (- riskLevelStart)) . riskLevelOf . findBestRoute $ field
+  where
+    field = toField . parseInput $ input :: Field
+    riskLevelStart = riskLevelAtStart field :: Int

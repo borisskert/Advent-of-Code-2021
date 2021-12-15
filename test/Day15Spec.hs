@@ -38,7 +38,8 @@ spec = do
                                    neighbors =
                                      [ Position {x = 0, y = 1},
                                        Position {x = 1, y = 0}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              ),
                              ( Position {x = 1, y = 0},
@@ -49,7 +50,8 @@ spec = do
                                      [ Position {x = 0, y = 0},
                                        Position {x = 1, y = 1},
                                        Position {x = 2, y = 0}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              ),
                              ( Position {x = 2, y = 0},
@@ -59,7 +61,8 @@ spec = do
                                    neighbors =
                                      [ Position {x = 1, y = 0},
                                        Position {x = 2, y = 1}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              ),
                              ( Position {x = 0, y = 1},
@@ -69,7 +72,8 @@ spec = do
                                    neighbors =
                                      [ Position {x = 0, y = 0},
                                        Position {x = 1, y = 1}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              ),
                              ( Position {x = 1, y = 1},
@@ -80,7 +84,8 @@ spec = do
                                      [ Position {x = 0, y = 1},
                                        Position {x = 1, y = 0},
                                        Position {x = 2, y = 1}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              ),
                              ( Position {x = 2, y = 1},
@@ -90,7 +95,8 @@ spec = do
                                    neighbors =
                                      [ Position {x = 1, y = 1},
                                        Position {x = 2, y = 0}
-                                     ]
+                                     ],
+                                   distance = 0
                                  }
                              )
                            ]
