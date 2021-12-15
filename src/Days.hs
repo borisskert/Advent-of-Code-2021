@@ -29,6 +29,7 @@ import Day12Part02 (howManyPathsV2)
 import Day13 (howManyDots)
 import Day13Part02 (printDots)
 import Day14 (polymerElements)
+import Day15 (lowestTotal)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -36,6 +37,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day15",
+          friendlyName = "Day 15",
+          isDefault = False,
+          run = do
+            input <- readFileContents "app/day15_input.txt"
+            let result = lowestTotal input
+            print result
+        }
+    ),
+    ( Day
         { name = "day14",
           friendlyName = "Day 14",
           isDefault = True,
