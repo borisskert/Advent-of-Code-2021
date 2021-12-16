@@ -31,6 +31,7 @@ import Day13Part02 (printDots)
 import Day14 (polymerElements)
 import Day15 (lowestTotal)
 import Day15Part02 (lowestTotalExtended)
+import Day16 (versionSum)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -38,6 +39,15 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day16",
+          friendlyName = "Day 16",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day16_input.txt"
+            let result = versionSum input
+            print result
+        }
+    ), ( Day
         { name = "day15part02",
           friendlyName = "Day 15/Part02",
           isDefault = False,
