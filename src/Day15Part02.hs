@@ -1,5 +1,7 @@
 module Day15Part02 where
 
+-- https://adventofcode.com/2021/day/15#part2
+
 import Data.List (nub, sortOn)
 import Data.Map (Map, elems, insert)
 import Data.Ord (Down (Down))

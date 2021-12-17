@@ -1,8 +1,9 @@
 module Day17 where
 
+-- https://adventofcode.com/2021/day/17
+
 import Data.List (maximumBy, sort, sortOn)
 import Data.List.Split (splitOn)
-import Debug.Trace (trace, traceShow)
 
 parseInput :: String -> ((Int, Int), (Int, Int))
 parseInput = tupleFromList . map toTuple . splitOn ", " . dropWhile (/= 'x')

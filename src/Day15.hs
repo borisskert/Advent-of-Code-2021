@@ -1,5 +1,7 @@
 module Day15 where
 
+-- https://adventofcode.com/2021/day/15
+
 import Data.Char (digitToInt)
 import Data.List (nub, sortOn)
 import Data.Map (Map, drop, fromList, keys, lookup)

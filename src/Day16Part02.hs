@@ -1,6 +1,6 @@
 module Day16Part02 where
 
--- https://adventofcode.com/2021/day/16
+-- https://adventofcode.com/2021/day/16#part2
 
 import Data.Either (Either (Left, Right))
 import Data.Maybe (fromJust, isNothing)
