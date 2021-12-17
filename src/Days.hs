@@ -33,6 +33,7 @@ import Day15 (lowestTotal)
 import Day15Part02 (lowestTotalExtended)
 import Day16 (versionSum)
 import Day16Part02 (evaluate)
+import Day17 (bestShotMaximumHeight)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -40,6 +41,15 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day17",
+          friendlyName = "Day 17",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day17_input.txt"
+            let result = bestShotMaximumHeight input
+            print result
+        }
+    ),( Day
         { name = "day16part02",
           friendlyName = "Day 16/Part0 02",
           isDefault = True,
