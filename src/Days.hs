@@ -29,6 +29,7 @@ import Day12Part02 (howManyPathsV2)
 import Day13 (howManyDots)
 import Day13Part02 (printDots)
 import Day14 (polymerElements)
+import Day14Part02 (polymerElementsExtended)
 import Day15 (lowestTotal)
 import Day15Part02 (lowestTotalExtended)
 import Day16 (versionSum)
@@ -99,6 +100,18 @@ days =
             input <- readFileContents "app/day15_input.txt"
             let result = lowestTotal input
             print result
+        }
+    ),
+    ( Day
+        { name = "day14part02",
+          friendlyName = "Day 14/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day14_input.txt"
+            let result = polymerElementsExtended input 40
+            print result
+            putStr " --> "
+            print (uncurry (-) result)
         }
     ),
     ( Day

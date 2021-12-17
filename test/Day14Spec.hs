@@ -3,6 +3,7 @@ module Day14Spec where
 import Data.Map (Map, fromList)
 import Day14
 import Test.Hspec
+import Day14 (toPairs)
 
 testInput = "NNCB\n\nCH -> B\nHH -> N\nCB -> H\nNH -> C\nHB -> C\nHC -> B\nHN -> C\nNN -> C\nBH -> H\nNC -> B\nNB -> B\nBN -> B\nBB -> N\nBC -> B\nCC -> N\nCN -> C"
 
@@ -41,6 +42,9 @@ spec = do
           ("HH", "N"),
           ("CB", "H")
         ]
+
+  it "toPairs" $ do
+    toPairs "ABC" `shouldBe` ["AB", "BC"]
 
   it "step" $ do
     step

@@ -1,3 +1,4 @@
+
 module Day14 where
 
 -- https://adventofcode.com/2021/day/14
@@ -22,12 +23,16 @@ parseInput input = (template, pairInsertions)
 replacementRules :: [(String, String)] -> Map String String
 replacementRules = fromList
 
+toPairs :: String -> [String]
+toPairs [] = []
+toPairs [c] = []
+toPairs (c1:c2:cs) = (c1 : [c2]) : toPairs (c2:cs)
+
 step :: String -> Map String String -> String
 step [] _ = []
 step template replacementRules = (++ [last template]) . concatMap replace $ pairs
   where
-    keyLength = 2 :: Int
-    pairs = divvy keyLength 1 template :: [String]
+    pairs = toPairs template :: [String]
 
     replace :: String -> String
     replace search

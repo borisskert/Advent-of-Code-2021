@@ -3,3 +3,5 @@
 out/
 dist-newstyle/
 *.cabal
+*.iml
+.idea/
