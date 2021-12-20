@@ -36,6 +36,7 @@ import Day16 (versionSum)
 import Day16Part02 (evaluate)
 import Day17 (bestShotMaximumHeight)
 import Day17Part02 (howManyDifferentVelocities)
+import Day20 (howManyPixelsAreLit)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -43,6 +44,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day20",
+          friendlyName = "Day 20",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day20_input.txt"
+            let result = howManyPixelsAreLit input
+            print result
+        }
+    ),
+    ( Day
         { name = "day17part02",
           friendlyName = "Day 17/Part 02",
           isDefault = True,
