@@ -22,86 +22,11 @@ spec = do
                    [2, 3, 1, 1, 9, 4, 4, 5, 8, 1]
                  ]
 
-  it "toField" $ do
-    toField
-      [ [1, 2, 3],
-        [4, 5, 6]
-      ]
-      `shouldBe` ( Field
-                     { size = Size {width = 3, height = 2},
-                       points =
-                         fromList
-                           [ ( Position {x = 0, y = 0},
-                               Point
-                                 { position = Position {x = 0, y = 0},
-                                   riskLevel = 1,
-                                   neighbors =
-                                     [ Position {x = 0, y = 1},
-                                       Position {x = 1, y = 0}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 1, y = 0},
-                               Point
-                                 { position = Position {x = 1, y = 0},
-                                   riskLevel = 2,
-                                   neighbors =
-                                     [ Position {x = 0, y = 0},
-                                       Position {x = 1, y = 1},
-                                       Position {x = 2, y = 0}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 2, y = 0},
-                               Point
-                                 { position = Position {x = 2, y = 0},
-                                   riskLevel = 3,
-                                   neighbors =
-                                     [ Position {x = 1, y = 0},
-                                       Position {x = 2, y = 1}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 0, y = 1},
-                               Point
-                                 { position = Position {x = 0, y = 1},
-                                   riskLevel = 4,
-                                   neighbors =
-                                     [ Position {x = 0, y = 0},
-                                       Position {x = 1, y = 1}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 1, y = 1},
-                               Point
-                                 { position = Position {x = 1, y = 1},
-                                   riskLevel = 5,
-                                   neighbors =
-                                     [ Position {x = 0, y = 1},
-                                       Position {x = 1, y = 0},
-                                       Position {x = 2, y = 1}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 2, y = 1},
-                               Point
-                                 { position = Position {x = 2, y = 1},
-                                   riskLevel = 6,
-                                   neighbors =
-                                     [ Position {x = 1, y = 1},
-                                       Position {x = 2, y = 0}
-                                     ],
-                                   distance = 0
-                                 }
-                             )
-                           ]
-                     }
-                 )
+  it "lowestRiskLevel" $ do
+    lowestRiskLevel [[1, 1, 6, 3], [1, 3, 8, 1], [2, 1, 3, 6], [3, 6, 9, 4]] `shouldBe` 17
+    lowestRiskLevel [[1, 2, 3], [4, 5, 6], [7, 8, 9]] `shouldBe` 20
+    (lowestRiskLevel . parseInput $ testInput) `shouldBe` 40
+    lowestRiskLevel [[1,1,1,9,9], [9,9,1,9,9],[9,1,1,9,9],[9,1,9,9,9],[9,1,1,1,1]] `shouldBe` 10
 
   it "lowestTotal" $ do
     lowestTotal "123\n456\n789" `shouldBe` 20

@@ -25,12 +25,6 @@ spec = do
                    [1, 9, 8, 2, 1, 9, 3, 2, 1, 4, 3, 2, 5, 4, 3]
                  ]
 
-  it "lowestRiskLevel" $ do
-    lowestRiskLevel [[1, 1, 6, 3], [1, 3, 8, 1], [2, 1, 3, 6], [3, 6, 9, 4]] `shouldBe` 17
-    lowestRiskLevel [[1, 2, 3], [4, 5, 6], [7, 8, 9]] `shouldBe` 20
-    (lowestRiskLevel . parseInput $ testInput) `shouldBe` 40
-    lowestRiskLevel [[1,1,1,9,9], [9,9,1,9,9],[9,1,1,9,9],[9,1,9,9,9],[9,1,1,1,1]] `shouldBe` 10
-
   it "lowestTotal" $ do
     lowestTotalExtended "123\n456\n789" `shouldBe` 97
     lowestTotalExtended "1234\n5678\n9012\n3456" `shouldBe` 114
