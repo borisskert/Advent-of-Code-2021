@@ -1,14 +1,29 @@
 module Day15Part02 where
 
+import Data.List (sortOn)
+import Data.Map (Map, delete, empty, insert, member, notMember, toList)
+import Day15 (parseInput)
+import Debug.Trace (traceShow)
+
 -- https://adventofcode.com/2021/day/15#part2
 
-import Data.List (nub, sortOn)
-import Data.Map (Map, elems, insert)
-import Data.Ord (Down (Down))
-import Day15 (Field (Field, points, size), Point (Point, distance, neighbors, position, riskLevel), Position (Position, x, y), findBestRoute, lookupPoint, parseInput, riskLevelAtStart, riskLevelOf, toField, Size (height, width))
+type RiskLevel = Int
 
-extend :: [[Int]] -> [[Int]]
-extend values = map (rowinger 0) values ++ map (rowinger 1) values ++ map (rowinger 2) values ++ map (rowinger 3) values ++ map (rowinger 4) values
+type Field = [[RiskLevel]]
+
+type Position = (Int, Int)
+
+type Point = (Position, RiskLevel)
+
+type Points = Map Position RiskLevel
+
+fieldOf :: Point -> Points
+fieldOf point = insert position value empty
+  where
+    (position, value) = point
+
+expand :: Field -> Field
+expand values = map (rowinger 0) values ++ map (rowinger 1) values ++ map (rowinger 2) values ++ map (rowinger 3) values ++ map (rowinger 4) values
   where
     rowinger :: Int -> [Int] -> [Int]
     rowinger i x = map (offset i) x ++ map (offset (i + 1)) x ++ map (offset (i + 2)) x ++ map (offset (i + 3)) x ++ map (offset (i + 4)) x
@@ -18,54 +33,50 @@ extend values = map (rowinger 0) values ++ map (rowinger 1) values ++ map (rowin
       | x + i > 9 = x + i + 1 - 10
       | otherwise = x + i
 
-data Distance = Distance Int deriving (Eq, Show)
-
-addDistance :: Point -> Int -> Point
-addDistance Point {position = position, riskLevel = risklevel, neighbors = neigbors} distance = (Point {position = position, riskLevel = risklevel, neighbors = neigbors, distance = risklevel + distance})
-
-updatePoint :: Field -> Point -> Field
-updatePoint Field {size = s, points = ps} p = Field {size = s, points = updatedPoints}
+riskLevelAt :: Position -> Field -> RiskLevel
+riskLevelAt position = (!! x) . (!! y)
   where
-    updatedPoints = insert (position p) p $ ps :: Map Position Point
+    (x, y) = position
 
-updatePoints :: Field -> [Point] -> Field
-updatePoints = foldl updatePoint
+insertAll :: [Point] -> Points -> Points
+insertAll points field = foldl (flip (uncurry insert)) field points
 
-initDistance :: Field -> Field
-initDistance field
-  | null distancedPoints = visit [start]
-  | not . null $ anyNotVisitedPoints = visit anyNotVisitedPoints
-  | otherwise = field
+lowestRiskLevel :: Field -> RiskLevel
+lowestRiskLevel field = findPath empty (fieldOf start)
   where
-    allPoints = elems . points $ field :: [Point]
-    distancedPoints = filter visited allPoints :: [Point]
-    startPosition = Position {x = 0, y = 0} :: Position
-    start = lookupPoint field startPosition :: Point
+    size = length field :: Int
+    start = ((0, 0), 0) :: Point
 
-    otherPoints = filter (/= start) allPoints :: [Point]
-    anyNotVisitedPoints = filter (not . visited) otherPoints :: [Point]
-
-    visit :: [Point] -> Field
-    visit notVisited =
-      initDistance
-        . updatePoints field
-        . nub
-        . concatMap visitNeighborsOf
-        . sortOn (Down . distance)
-        . filter visited
-        . map (lookupPoint field)
-        . nub
-        . concatMap neighbors
-        $ notVisited
+    findPath :: Points -> Points -> RiskLevel
+    findPath visited path
+      | bestPointPosition == (size - 1, size - 1) = bestPointValue
+      | null neighbors = findPath nextVisited pathWithout
+      | otherwise = findPath nextVisited nextPath
       where
-        visitNeighborsOf :: Point -> [Point]
-        visitNeighborsOf point = map (`addDistance` distance point) . filter (not . visited) . map (lookupPoint field) . neighbors $ point
+        bestPoint = head . sortOn snd . toList $ path :: Point
+        (bestPointPosition, bestPointValue) = bestPoint
+        neighbors = filter (`notMember` path) . filter (`notMember` visited) . neighborsOf $ bestPointPosition :: [Position]
+        nextPathMembers = map (\p -> (p, (p `riskLevelAt` field) + bestPointValue)) neighbors :: [Point]
+        nextVisited = insert bestPointPosition bestPointValue visited :: Points
+        pathWithout = delete bestPointPosition path :: Points
+        nextPath = insertAll nextPathMembers pathWithout :: Points
 
-    visited :: Point -> Bool
-    visited p = ((> 0) . distance $ p) || (p == start)
+    neighborsOf :: Position -> [Position]
+    neighborsOf position = right ++ left ++ top ++ bottom
+      where
+        (x, y) = position
+        right
+          | x < size - 1 = [(x + 1, y)]
+          | otherwise = []
+        left
+          | x > 0 = [(x - 1, y)]
+          | otherwise = []
+        top
+          | y > 0 = [(x, y - 1)]
+          | otherwise = []
+        bottom
+          | y < size - 1 = [(x, y + 1)]
+          | otherwise = []
 
 lowestTotalExtended :: String -> Int
-lowestTotalExtended input = (+ (- riskLevelStart)) . riskLevelOf . findBestRoute $ field
-  where
-    field = toField . extend . parseInput $ input :: Field
-    riskLevelStart = riskLevelAtStart field :: Int
+lowestTotalExtended = lowestRiskLevel . expand . parseInput

@@ -85,7 +85,7 @@ days =
     ( Day
         { name = "day15part02",
           friendlyName = "Day 15/Part02",
-          isDefault = False,
+          isDefault = True,
           run = do
             input <- readFileContents "app/day15_input.txt"
             let result = lowestTotalExtended input

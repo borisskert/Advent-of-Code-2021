@@ -1,15 +1,6 @@
 module Day15Part02Spec where
 
-import Day15
-  ( Field (Field, points, size),
-    Point (Point, distance, neighbors, position, riskLevel),
-    Position (Position, x, y),
-    Size (Size, height, width),
-    lowestTotal,
-    parseInput,
-    toField,
-  )
-import Data.Map (fromList)
+import Day15 (parseInput)
 import Day15Part02
 import Test.Hspec
 
@@ -17,8 +8,8 @@ testInput = "1163751742\n1381373672\n2136511328\n3694931569\n7463417111\n1319128
 
 spec :: Spec
 spec = do
-  it "extend" $ do
-    extend
+  it "expand" $ do
+    expand
       [ [3, 2, 1],
         [6, 5, 4]
       ]
@@ -34,158 +25,11 @@ spec = do
                    [1, 9, 8, 2, 1, 9, 3, 2, 1, 4, 3, 2, 5, 4, 3]
                  ]
 
-  it "initDistance" $ do
-    initDistance
-      ( Field
-          { size = Size {width = 3, height = 2},
-            points =
-              fromList
-                [ 
-                    (Position {x = 0, y = 0},Point
-                                             { position = Position {x = 0, y = 0},
-                                               riskLevel = 1,
-                                               neighbors =
-                                                 [ Position {x = 0, y = 1},
-                                                   Position {x = 1, y = 0}
-                                                 ],
-                                               distance = 0
-                                             }),
-                  ( Position {x = 1, y = 0},
-                    Point
-                      { position = Position {x = 1, y = 0},
-                        riskLevel = 2,
-                        neighbors =
-                          [ Position {x = 0, y = 0},
-                            Position {x = 1, y = 1},
-                            Position {x = 2, y = 0}
-                          ],
-                        distance = 0
-                      }
-                  ),
-                  ( Position {x = 2, y = 0},
-                    Point
-                      { position = Position {x = 2, y = 0},
-                        riskLevel = 3,
-                        neighbors =
-                          [ Position {x = 1, y = 0},
-                            Position {x = 2, y = 1}
-                          ],
-                        distance = 0
-                      }
-                  ),
-                  ( Position {x = 0, y = 1},
-                    Point
-                      { position = Position {x = 0, y = 1},
-                        riskLevel = 4,
-                        neighbors =
-                          [ Position {x = 0, y = 0},
-                            Position {x = 1, y = 1}
-                          ],
-                        distance = 0
-                      }
-                  ),
-                  ( Position {x = 1, y = 1},
-                    Point
-                      { position = Position {x = 1, y = 1},
-                        riskLevel = 5,
-                        neighbors =
-                          [ Position {x = 0, y = 1},
-                            Position {x = 1, y = 0},
-                            Position {x = 2, y = 1}
-                          ],
-                        distance = 0
-                      }
-                  ),
-                  ( Position {x = 2, y = 1},
-                    Point
-                      { position = Position {x = 2, y = 1},
-                        riskLevel = 6,
-                        neighbors =
-                          [ Position {x = 1, y = 1},
-                            Position {x = 2, y = 0}
-                          ],
-                        distance = 0
-                      }
-                  )
-                ]
-          }
-      )
-      `shouldBe` ( Field
-                     { size = Size {width = 3, height = 2},
-                       points =
-                         fromList
-                           [
-                                ( Position {x = 0, y = 0},
-                               Point
-                                 { position = Position {x = 0, y = 0},
-                                   riskLevel = 1,
-                                   neighbors =
-                                     [ Position {x = 0, y = 1},
-                                       Position {x = 1, y = 0}
-                                     ],
-                                   distance = 0
-                                 }
-                             ),
-                             ( Position {x = 1, y = 0},
-                               Point
-                                 { position = Position {x = 1, y = 0},
-                                   riskLevel = 2,
-                                   neighbors =
-                                     [ Position {x = 0, y = 0},
-                                       Position {x = 1, y = 1},
-                                       Position {x = 2, y = 0}
-                                     ],
-                                   distance = 2
-                                 }
-                             ),
-                             ( Position {x = 2, y = 0},
-                               Point
-                                 { position = Position {x = 2, y = 0},
-                                   riskLevel = 3,
-                                   neighbors =
-                                     [ Position {x = 1, y = 0},
-                                       Position {x = 2, y = 1}
-                                     ],
-                                   distance = 5
-                                 }
-                             ),
-                             ( Position {x = 0, y = 1},
-                               Point
-                                 { position = Position {x = 0, y = 1},
-                                   riskLevel = 4,
-                                   neighbors =
-                                     [ Position {x = 0, y = 0},
-                                       Position {x = 1, y = 1}
-                                     ],
-                                   distance = 4
-                                 }
-                             ),
-                             ( Position {x = 1, y = 1},
-                               Point
-                                 { position = Position {x = 1, y = 1},
-                                   riskLevel = 5,
-                                   neighbors =
-                                     [ Position {x = 0, y = 1},
-                                       Position {x = 1, y = 0},
-                                       Position {x = 2, y = 1}
-                                     ],
-                                   distance = 7
-                                 }
-                             ),
-                             ( Position {x = 2, y = 1},
-                               Point
-                                 { position = Position {x = 2, y = 1},
-                                   riskLevel = 6,
-                                   neighbors =
-                                     [ Position {x = 1, y = 1},
-                                       Position {x = 2, y = 0}
-                                     ],
-                                   distance = 11
-                                 }
-                             )
-                           ]
-                     }
-                 )
+  it "lowestRiskLevel" $ do
+    lowestRiskLevel [[1, 1, 6, 3], [1, 3, 8, 1], [2, 1, 3, 6], [3, 6, 9, 4]] `shouldBe` 17
+    lowestRiskLevel [[1, 2, 3], [4, 5, 6], [7, 8, 9]] `shouldBe` 20
+    (lowestRiskLevel . parseInput $ testInput) `shouldBe` 40
+    lowestRiskLevel [[1,1,1,9,9], [9,9,1,9,9],[9,1,1,9,9],[9,1,9,9,9],[9,1,1,1,1]] `shouldBe` 10
 
   it "lowestTotal" $ do
     lowestTotalExtended "123\n456\n789" `shouldBe` 97
