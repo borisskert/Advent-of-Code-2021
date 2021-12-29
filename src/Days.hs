@@ -36,6 +36,7 @@ import Day16 (versionSum)
 import Day16Part02 (evaluate)
 import Day17 (bestShotMaximumHeight)
 import Day17Part02 (howManyDifferentVelocities)
+import Day18 (finalSnailfishSum)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -43,6 +44,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day18",
+          friendlyName = "Day 18",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day18_input.txt"
+            let result = finalSnailfishSum input
+            print result
+        }
+    ),
+    ( Day
         { name = "day17part02",
           friendlyName = "Day 17/Part 02",
           isDefault = True,
