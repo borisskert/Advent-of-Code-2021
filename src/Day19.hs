@@ -256,4 +256,3 @@ howManyBeacons :: String -> Int
 howManyBeacons input = length . absoluteBeaconPositions $ scans
   where
     scans = toScans . parseInput $ input :: [Scan]
-    combinations = [(x, y) | x <- scans, y <- scans, x /= y] :: [(Scan, Scan)]

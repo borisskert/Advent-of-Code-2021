@@ -39,6 +39,7 @@ import Day17Part02 (howManyDifferentVelocities)
 import Day18 (finalSnailfishSum)
 import Day18Part02 (largestMagnitude)
 import Day19 (howManyBeacons)
+import Day19Part02 (largestManhattanDistance)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -46,6 +47,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day19part02",
+          friendlyName = "Day 19/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day19_input.txt"
+            let result = largestManhattanDistance input
+            print result
+        }
+    ),
+    ( Day
         { name = "day19",
           friendlyName = "Day 19",
           isDefault = True,
