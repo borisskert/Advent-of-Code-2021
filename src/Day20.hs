@@ -180,10 +180,10 @@ enhancePixel alg (position, light) = (position, isLit)
     isLit = fromJust . lookup light $ alg
 
 enhance :: EnhancementAlgorithm -> Image -> Image
-enhance alg image = fromRawImage . fromList . toList $ newBitmap
+enhance alg image = fromRawImage newBitmap
   where
     newBitmap = fromList . map (enhancePixel alg) $ extended :: RawImage
-    extended = map (\p -> (p, fromMaybe 0 . lookup p $ image)) . allPositionsExtendedBy 20 $ image
+    extended = map (\p -> (p, fromMaybe 0 . lookup p $ image)) . allPositionsExtendedBy 4 $ image
 
 crop :: Size -> Image -> Image
 crop (width, height) image = fromList . filter ((\(x, y) -> x >= newMinX && y >= newMinY && x <= newMaxX && y <= newMaxY) . fst) . toList $ image
