@@ -42,6 +42,7 @@ import Day19 (howManyBeacons)
 import Day19Part02 (largestManhattanDistance)
 import Day20 (howManyPixelsAreLit)
 import Day20Part02 (howManyPixelsAreLitExtended)
+import Day21 (losingSituation)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -49,6 +50,18 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day21",
+          friendlyName = "Day 21",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day21_input.txt"
+            let result = losingSituation input
+            print result
+            putStr " --> "
+            print (uncurry (*) result)
+        }
+    ),
+    ( Day
         { name = "day20part02",
           friendlyName = "Day 20/Part 02",
           isDefault = True,
