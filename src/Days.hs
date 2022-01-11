@@ -43,6 +43,7 @@ import Day19Part02 (largestManhattanDistance)
 import Day20 (howManyPixelsAreLit)
 import Day20Part02 (howManyPixelsAreLitExtended)
 import Day21 (losingSituation)
+import Day21Part02 (howManyUniverses)
 import System.IO
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -50,6 +51,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day21part02",
+          friendlyName = "Day 21/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day21_input.txt"
+            let result = howManyUniverses input
+            print result
+        }
+    ),
+    ( Day
         { name = "day21",
           friendlyName = "Day 21",
           isDefault = True,
