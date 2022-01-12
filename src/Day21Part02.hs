@@ -6,8 +6,9 @@ module Day21Part02 where
 
 import Data.Map (Map, delete, fromList, insert, keys, lookup, member)
 import Data.Maybe
-import Day21 (Score, Scores, Space, parseInput)
+import Day21 (Score, Space, parseInput)
 import Prelude hiding (lookup)
+import Data.List (nub)
 
 type Player = (String, Score, Space)
 
@@ -16,6 +17,8 @@ type Game = [Player]
 type Games = Map Game Integer
 
 type PlayerWins = (Integer, Integer)
+
+type Scores = [(Score, Integer)]
 
 hasWinner :: Game -> Bool
 hasWinner = any hasWon
@@ -42,10 +45,12 @@ turn dieScore game = nextPlayers
       | player == currPlayer = turnPlayer dieScore player
       | otherwise = player
 
-dice :: [Scores]
-dice = [[x, y, z] | x <- values, y <- values, z <- values]
+dice :: Scores
+dice = map (\s -> (s, toInteger . length . filter (== s) $ sums)) . nub $ sums
   where
     values = [1, 2, 3]
+    combinations = [[x, y, z] | x <- values, y <- values, z <- values]
+    sums = map sum combinations
 
 updateGame :: (Game, Integer) -> Games -> Games
 updateGame (game, count) games = insert game (count + existingCount) games
@@ -82,10 +87,10 @@ universes games
   where
     (game, count) = withCount . head . keys $ games :: (Game, Integer)
     otherGames = delete game games :: Games
-    scores = map sum dice :: Scores
-    newGames = map (`turn` game) scores :: [Game]
-    wonGames = map (,count) . filter hasWinner $ newGames :: [(Game, Integer)]
-    notWonGames = map (,count) . filter (not . hasWinner) $ newGames :: [(Game, Integer)]
+    scores = dice :: Scores
+    newGames = map (\(score, count) -> (turn score game, count)) $ scores :: [(Game, Integer)]
+    wonGames = map (\(g, i) -> (g, i * count)) . filter (hasWinner . fst) $ newGames :: [(Game, Integer)]
+    notWonGames = map (\(g, i) -> (g, i * count)) . filter (not . hasWinner . fst) $ newGames :: [(Game, Integer)]
 
     gamesScores = toPlayerWins wonGames :: PlayerWins
 
