@@ -45,6 +45,9 @@ import Day20Part02 (howManyPixelsAreLitExtended)
 import Day21 (losingSituation)
 import Day21Part02 (howManyUniverses)
 import System.IO
+import Control.StopWatch (stopWatch)
+import System.Clock (TimeSpec(TimeSpec), sec, nsec)
+import Text.Printf (printf)
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
 
@@ -222,8 +225,8 @@ days =
           isDefault = True,
           run = do
             input <- readFileContents "app/day13_input.txt"
-            let result = "\n" ++ printDots input
-            putStrLn result
+            let result = printDots input
+            printf "\n%s" result
         }
     ),
     ( Day
@@ -501,16 +504,20 @@ runDays args
     runOrNotFound :: String -> IO ()
     runOrNotFound input
       | null foundDays = do
-        putStrLn (input ++ " not found.")
+        printf "%s  not found.\n"
       | otherwise = runDay . head $ foundDays
       where
         foundDays = filter ((== input) . name) days
 
 runAll :: IO ()
-runAll = mapM_ runDay days
+runAll = do
+  (_, time) <- stopWatch (mapM_ runDay days)
+  printf "Completed in %d.%0.9d seconds.\n" (sec time) (nsec time)
 
 runDefault :: IO ()
-runDefault = mapM_ runOrOmit days
+runDefault = do
+  (_, time) <- stopWatch (mapM_ runOrOmit days)
+  printf "Completed in %d.%0.9d seconds.\n" (sec time) (nsec time)
   where
     runOrOmit :: Day -> IO ()
     runOrOmit day
@@ -519,14 +526,14 @@ runDefault = mapM_ runOrOmit days
 
 runDay :: Day -> IO ()
 runDay day = do
-  putStrLn ("Running " ++ friendlyName day ++ " (" ++ name day ++ ") ...")
+  printf "Running %s (%s) ...\n" (friendlyName day) (name day)
   putStr " --> "
-  run day
-  putStrLn "Finished."
+  (_, time) <- stopWatch (run day)
+  printf "Finished. (%d.%0.9d seconds)\n" (sec time) (nsec time)
 
 omitDay :: Day -> IO ()
 omitDay day = do
-  putStrLn (friendlyName day ++ " (" ++ name day ++ ") omitted.")
+  printf "%s (%s) omitted.\n" (friendlyName day) (name day)
 
 readFileContents :: String -> IO String
 readFileContents filename = do
