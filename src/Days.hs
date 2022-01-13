@@ -1,5 +1,6 @@
 module Days where
 
+import Control.StopWatch (stopWatch)
 import qualified Data.Map as Map (Map, fromList, lookup, toList)
 import Data.Maybe (mapMaybe)
 import Day01 (countIncreases)
@@ -45,9 +46,9 @@ import Day20Part02 (howManyPixelsAreLitExtended)
 import Day21 (losingSituation)
 import Day21Part02 (howManyUniverses)
 import Day22 (howManyCubesAreOn)
+import Day22Part02 (howManyCubesAreOnExtended)
+import System.Clock (TimeSpec (TimeSpec), nsec, sec)
 import System.IO
-import Control.StopWatch (stopWatch)
-import System.Clock (TimeSpec(TimeSpec), sec, nsec)
 import Text.Printf (printf)
 
 data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName :: String}
@@ -55,6 +56,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day22part02",
+          friendlyName = "Day 22/Part02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day22_input.txt"
+            let result = howManyCubesAreOnExtended input
+            print result
+        }
+    ),
+    ( Day
         { name = "day22",
           friendlyName = "Day 22",
           isDefault = True,

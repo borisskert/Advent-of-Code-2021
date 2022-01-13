@@ -1,6 +1,5 @@
 module Day22Spec where
 
-import Data.Map (Map, fromList)
 import Day22
 import Test.Hspec
 

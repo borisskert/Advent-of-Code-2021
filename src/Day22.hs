@@ -49,10 +49,13 @@ parseValue input = (head splitValue, last splitValue)
 isOn :: EnabledGeometry -> Bool
 isOn (isOn, _) = isOn
 
-howManyCubes :: Cuboid -> Int
-howManyCubes cuboid = (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1)
+howManyCubes :: Cuboid -> Integer
+howManyCubes cuboid = x * y * z
   where
     ((x1, x2), (y1, y2), (z1, z2)) = cuboid
+    x = toInteger (x2 - x1 + 1)
+    y = toInteger (y2 - y1 + 1) 
+    z = toInteger (z2 - z1 + 1)
 
 intersection :: Cuboid -> Cuboid -> Maybe Cuboid
 intersection cuboidA cuboidB
@@ -160,7 +163,7 @@ collect toCollect collected
     collectOff :: Geometries
     collectOff = mapMaybe (`without` geometry) $ collected
 
-count :: Geometry -> Int
+count :: Geometry -> Integer
 count (Simple cuboid) = howManyCubes cuboid
 count (Without cuboid without) = cubes - noCubes
   where
@@ -178,13 +181,13 @@ toGeometry rebootStep = (isOn rebootStep, Simple cuboid)
       | onOff == "on" = True
       | otherwise = error "illegal onOff value"
 
-howManyAreOn :: RebootSteps -> Int
+howManyAreOn :: RebootSteps -> Integer
 howManyAreOn rebootSteps = sum . map count $ collected
   where
     geometries = map toGeometry rebootSteps :: EnabledGeometries
     collected = foldl (flip collect) [] geometries :: Geometries
 
-howManyCubesAreOn :: String -> Int
+howManyCubesAreOn :: String -> Integer
 howManyCubesAreOn input = howManyAreOn . mapMaybe (onlyWithin filterCuboid) $ steps
   where
     steps = parseInput input :: RebootSteps
