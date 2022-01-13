@@ -44,6 +44,7 @@ import Day20 (howManyPixelsAreLit)
 import Day20Part02 (howManyPixelsAreLitExtended)
 import Day21 (losingSituation)
 import Day21Part02 (howManyUniverses)
+import Day22 (howManyCubesAreOn)
 import System.IO
 import Control.StopWatch (stopWatch)
 import System.Clock (TimeSpec(TimeSpec), sec, nsec)
@@ -54,6 +55,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day22",
+          friendlyName = "Day 22",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day22_input.txt"
+            let result = howManyCubesAreOn input
+            print result
+        }
+    ),
+    ( Day
         { name = "day21part02",
           friendlyName = "Day 21/Part 02",
           isDefault = True,
