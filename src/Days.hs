@@ -47,6 +47,7 @@ import Day21 (losingSituation)
 import Day21Part02 (howManyUniverses)
 import Day22 (howManyCubesAreOn)
 import Day22Part02 (howManyCubesAreOnExtended)
+import Day23 (leastEnergyRequired)
 import System.Clock (TimeSpec (TimeSpec), nsec, sec)
 import System.IO
 import Text.Printf (printf)
@@ -56,6 +57,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day23",
+          friendlyName = "Day 23",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day23_input.txt"
+            let result = leastEnergyRequired input
+            print result
+        }
+    ),
+    ( Day
         { name = "day22part02",
           friendlyName = "Day 22/Part02",
           isDefault = True,
