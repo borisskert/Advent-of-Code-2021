@@ -5,10 +5,11 @@ module Day23 where
 -- https://adventofcode.com/2021/day/23
 
 import Data.Graph (Graph, Vertex, dfs, graphFromEdges, vertices)
-import Data.List (group, nub, partition)
+import Data.List (group, nub, partition, sortOn)
 import Data.Map (Map, delete, elems, empty, fromList, insert, keys, lookup, member, toList, unionWith, unions)
 import Data.Maybe (catMaybes, fromJust, isJust, isNothing, mapMaybe)
 import Data.Tree (Forest, Tree (rootLabel, subForest), levels)
+import Debug.Trace (traceShow)
 import Prelude hiding (lookup)
 
 type Energy = Int
@@ -87,24 +88,28 @@ isRoom (type', _) = type' `elem` rooms
 
 isBehind :: Edges -> PlaceId -> Bool
 isBehind edges placeId
-  | type' `elem` rooms = all ((== type') . fst) . fromJust . lookup placeId $ edges
+  | type' `elem` rooms = placeId `elem` behinds
   | otherwise = number == 0 || number == 10
   where
     (type', number) = placeId
+    behinds = tail rooms' :: [PlaceId]
+    rooms' = sortOn snd . filter ((== type') . fst) . keys $ edges :: [PlaceId]
 
 isAhead :: Edges -> PlaceId -> Bool
 isAhead edges placeId
-  | type' `elem` rooms = any ((/= type') . fst) . fromJust . lookup placeId $ edges
+  | type' `elem` rooms = placeId `elem` aheads
   | otherwise = number == 1 || number == 9
   where
     (type', number) = placeId
+    aheads = init rooms' :: [PlaceId]
+    rooms' = sortOn snd . filter ((== type') . fst) . keys $ edges :: [PlaceId]
 
-behindPlaceOf :: Edges -> PlaceId -> PlaceId
+behindPlaceOf :: Edges -> PlaceId -> [PlaceId]
 behindPlaceOf edges placeId
   | not . isAhead edges $ placeId = error "Not a ahead place!"
-  | isHallway placeId && number == 1 = ('H', 0)
-  | isHallway placeId = ('H', 10)
-  | otherwise = (type', 1)
+  | isHallway placeId && number == 1 = [('H', 0)]
+  | isHallway placeId = [('H', 10)]
+  | otherwise = filter ((> number) . snd) . filter ((== type') . fst) . keys $ edges
   where
     (type', number) = placeId
 
@@ -122,12 +127,13 @@ isReserved amphipods placeId = (placeId `elem`) . keys $ amphipods
 
 isForbidden :: Field -> PlaceId -> Bool
 isForbidden field placeId
-  | isRoom placeId && isBehind edges placeId = False
-  | isRoom placeId && (not . isReserved amphipods $ behindPlace) = True
+  | isRoom placeId && isBehind edges placeId && (not . isAhead edges $ placeId) = False
+  | isRoom placeId && isBehind edges placeId && isAhead edges placeId = not . all (isReserved amphipods) $ behindPlaces
+  | isRoom placeId = not . all (isReserved amphipods) $ behindPlaces
   | otherwise = placeId `elem` generallyForbidden
   where
     (amphipods, edges) = field
-    behindPlace = behindPlaceOf edges placeId :: PlaceId
+    behindPlaces = behindPlaceOf edges placeId :: [PlaceId]
 
     generallyForbidden =
       [ ('H', 2),
@@ -143,16 +149,15 @@ isFinished :: PlaceId -> Field -> Bool
 isFinished placeId field
   | isNothing place = False
   | not . isInTarget placeId $ amphipod = False
-  | isBehind edges placeId = True
-  | isJust behindPlace = behindAmphipod == amphipod
+  | isBehind edges placeId && (not . isAhead edges $ placeId) = True
+  | not . null $ behindAmphipods = all (== amphipod) behindAmphipods
   | otherwise = False
   where
     (amphipods, edges) = field
     place = lookup placeId amphipods :: Place
     amphipod = fromJust place :: Material
-    behindPlaceId = behindPlaceOf edges placeId :: PlaceId
-    behindPlace = lookup behindPlaceId amphipods :: Place
-    behindAmphipod = fromJust behindPlace :: Material
+    behindPlaceIds = behindPlaceOf edges placeId :: [PlaceId]
+    behindAmphipods = mapMaybe (`lookup` amphipods) behindPlaceIds :: [Material]
 
 isLegal :: Field -> Move -> Bool
 isLegal field move
@@ -168,13 +173,12 @@ isLegal field move
 
     targetWillNotBlock :: Bool
     targetWillNotBlock
-      | isBehind edges targetPlaceId = True
-      | isNothing behindPlace = False
-      | otherwise = behindAmphipod == material
+      | not . isAhead edges $ targetPlaceId = True
+      | null behindAmphipods = False
+      | otherwise = all (== material) behindAmphipods && (length behindAmphipods == length behindPlaceIds)
       where
-        behindPlaceId = behindPlaceOf edges targetPlaceId :: PlaceId
-        behindPlace = lookup behindPlaceId amphipods :: Place
-        behindAmphipod = fromJust behindPlace
+        behindPlaceIds = behindPlaceOf edges targetPlaceId :: [PlaceId]
+        behindAmphipods = mapMaybe (`lookup` amphipods) behindPlaceIds :: [Material]
 
 createEdgesList :: Field -> [(Place, PlaceId, [PlaceId])]
 createEdgesList field = map toEdge locations
@@ -223,18 +227,18 @@ possibleTargets placeId field = searchTargetsFor . head . dfs graph $ [vertex]
     vertex = fromJust . vertexFromKey $ placeId :: Vertex
 
     searchTargetsFor :: Tree Vertex -> [PlaceId]
-    searchTargetsFor vertexNode = concatMap searchTargets subs
+    searchTargetsFor vertexNode = concatMap searchTargets $ subs
       where
-        (place, placeId, _) = nodeFromVertex . rootLabel $ vertexNode :: (Place, PlaceId, [PlaceId])
+        (place, _, _) = nodeFromVertex . rootLabel $ vertexNode :: (Place, PlaceId, [PlaceId])
         subs = subForest vertexNode :: Forest Vertex
 
     searchTargets :: Tree Vertex -> [PlaceId]
     searchTargets vertexNode
-      | isReserved amphipods placeId = []
-      | isForbidden field placeId = concatMap searchTargets subs
-      | otherwise = (placeId :) . concatMap searchTargets $ subs
+      | isReserved amphipods placeId' = []
+      | isForbidden field placeId' = concatMap searchTargets subs
+      | otherwise = (placeId' :) . concatMap searchTargets $ subs
       where
-        (place, placeId, _) = nodeFromVertex . rootLabel $ vertexNode :: (Place, PlaceId, [PlaceId])
+        (place, placeId', _) = nodeFromVertex . rootLabel $ vertexNode :: (Place, PlaceId, [PlaceId])
         subs = subForest vertexNode :: Forest Vertex
 
 type Move = (Material, PlaceId, PlaceId)
