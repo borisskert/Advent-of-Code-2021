@@ -49,6 +49,7 @@ import Day22 (howManyCubesAreOn)
 import Day22Part02 (howManyCubesAreOnExtended)
 import Day23 (leastEnergyRequired)
 import Day23Part02 (leastEnergyRequiredExtended)
+import Day25 (stepsUntilDeadlock)
 import System.Clock (TimeSpec (TimeSpec), nsec, sec)
 import System.IO
 import Text.Printf (printf)
@@ -58,6 +59,16 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 days :: [Day]
 days =
   [ ( Day
+        { name = "day25",
+          friendlyName = "Day 25",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day25_input.txt"
+            let result = stepsUntilDeadlock input
+            print result
+        }
+    ),
+    ( Day
         { name = "day23part02",
           friendlyName = "Day 23/Part 02",
           isDefault = True,
