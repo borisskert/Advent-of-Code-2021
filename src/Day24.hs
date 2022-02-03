@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
 module Day24 where
 
 -- https://adventofcode.com/2021/day/24
@@ -153,45 +155,102 @@ process input = registersOf . foldl operate alu
 validationCode :: Input -> Program -> Int
 validationCode input = fromJust . lookup 'z' . process input
 
-groupOn :: (Eq b) => (a -> b) -> [a] -> [[a]]
-groupOn function = groupBy (\a b -> function a == function b)
-
-replaceDigitAt :: Int -> Char -> String -> String
-replaceDigitAt index digit number = (++ end) . (++ [digit]) $ start
+splitIntoSubPrograms :: Program -> [Program]
+splitIntoSubPrograms [] = []
+splitIntoSubPrograms programs = program : splitIntoSubPrograms others
   where
-    start = take index number :: String
-    end = tail . drop index $ number :: String
+    program = head programs : (takeWhile (\(name, _) -> name /= "inp") . tail $ programs)
+    others = dropWhile (\(name, _) -> name /= "inp") . tail $ programs
 
-createNumbers :: Int -> String -> [(Char, String)]
-createNumbers index number = map (\digit -> (digit, replaceDigitAt index digit number)) digits
+processZ :: Program -> String -> [Int]
+processZ program = processThrough (splitIntoSubPrograms program)
+
+processThrough :: [Program] -> String -> [Int]
+processThrough programs number = map (validationCode number) usePrograms
   where
-    digits = reverse "123456789" :: [Char]
+    size = length number :: Int
+    usePrograms = map (concat . (`take` programs)) [1 .. size] :: [Program]
 
-numberGroupsAt :: Int -> Program -> [String]
-numberGroupsAt i program = bla
+allNumbers :: Int -> [String]
+allNumbers size = filter ('0' `notElem`) . map show $ [min .. max]
   where
-    start = replicate 14 $ '9' :: String
-    numbers = createNumbers i start :: [(Char, String)]
-    bla = map (map fst) . groupOn snd . sortOn (Down . snd) . map (\(digit, number) -> (digit, validationCode number program)) $ numbers :: [[Char]]
+    max = read . replicate size $ '9' :: Integer
+    min = read . replicate size $ '1' :: Integer
 
-numberGroups :: Program -> [[String]]
-numberGroups program = map (reverse . sort . (`numberGroupsAt` program)) [0 .. 13]
-
-makeNumbers :: [[[Char]]] -> [String]
-makeNumbers [] = [""]
-makeNumbers (g : gs) = concatMap (\d -> map (d :) next) digits
+findPart01 :: Program -> [String]
+findPart01 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : _) -> three == five)
+    . map (\n -> (n, processZ program n))
+    $ numbers
   where
-    digits = map head g :: [Char]
-    next = makeNumbers gs :: [String]
+    size = 5
+    numbers = allNumbers size :: [String]
 
-findFirstValidNumber :: Program -> [String] -> String
-findFirstValidNumber program = head . map fst . filter ((== 0) . snd) . map (\n -> (n, validationCode n program))
-
-hackLargest :: Program -> String
-hackLargest program = findFirstValidNumber program numbers
+extendNumbers :: Int -> [String] -> [String]
+extendNumbers nDigits = concatMap (\n -> map (n ++) extensions)
   where
-    groups = numberGroups program
-    numbers = makeNumbers groups :: [String]
+    extensions = allNumbers nDigits :: [String]
+
+findPart02 :: Program -> [String]
+findPart02 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : _) -> two == six)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part01 = findPart01 program :: [String]
+    extended = extendNumbers 1 part01 :: [String]
+
+findPart03 :: Program -> [String]
+findPart03 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : seven : _) -> one == seven)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part02 = findPart02 program :: [String]
+    extended = extendNumbers 1 part02 :: [String]
+
+findPart04 :: Program -> [String]
+findPart04 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : seven : eight : nine : ten : _) -> eight == ten)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part03 = findPart03 program :: [String]
+    extended = extendNumbers 3 part03 :: [String]
+
+findPart05 :: Program -> [String]
+findPart05 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : seven : eight : nine : ten : eleven : _) -> eleven == seven)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part04 = findPart04 program :: [String]
+    extended = extendNumbers 1 part04 :: [String]
+
+findPart06 :: Program -> [String]
+findPart06 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : seven : eight : nine : ten : eleven : twelve : _) -> twelve == 0)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part05 = findPart05 program :: [String]
+    extended = extendNumbers 1 part05 :: [String]
+
+findPart07 :: Program -> [String]
+findPart07 program =
+  map fst
+    . filter (\(_, one : two : three : four : five : six : seven : eight : nine : ten : eleven : twelve : thirdteen : fourthteen : _) -> fourthteen == 0)
+    . map (\n -> (n, processZ program n))
+    $ extended
+  where
+    part06 = findPart06 program :: [String]
+    extended = extendNumbers 2 part06 :: [String]
 
 hackLargestNumber :: String -> String
-hackLargestNumber = hackLargest . parseInput
+hackLargestNumber = last . findPart07 . parseInput

@@ -50,6 +50,7 @@ import Day22Part02 (howManyCubesAreOnExtended)
 import Day23 (leastEnergyRequired)
 import Day23Part02 (leastEnergyRequiredExtended)
 import Day24 (hackLargestNumber)
+import Day24Part02 (hackLowestNumber)
 import Day25 (stepsUntilDeadlock)
 import System.Clock (TimeSpec (TimeSpec), nsec, sec)
 import System.IO
@@ -59,17 +60,27 @@ data Day = Day {run :: IO (), isDefault :: Bool, name :: String, friendlyName ::
 
 days :: [Day]
 days =
-  [     ( Day
-            { name = "day25",
-              friendlyName = "Day 25",
-              isDefault = True,
-              run = do
-                input <- readFileContents "app/day25_input.txt"
-                let result = stepsUntilDeadlock input
-                print result
-            }
-        ),
-     ( Day
+  [ ( Day
+        { name = "day25",
+          friendlyName = "Day 25",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day25_input.txt"
+            let result = stepsUntilDeadlock input
+            print result
+        }
+    ),
+    ( Day
+        { name = "day24part02",
+          friendlyName = "Day 24/Part 02",
+          isDefault = True,
+          run = do
+            input <- readFileContents "app/day24_input.txt"
+            let result = hackLowestNumber input
+            print result
+        }
+    ),
+    ( Day
         { name = "day24",
           friendlyName = "Day 24",
           isDefault = True,
