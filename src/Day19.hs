@@ -6,6 +6,7 @@ import Data.List (nub, sortBy)
 import Data.List.Split (splitOn)
 import Data.Maybe (fromJust, isJust, isNothing)
 import Prelude hiding (subtract)
+import Data.Set (Set, fromList, toList, empty, union, intersection)
 
 parseInput :: String -> [[[Int]]]
 parseInput = map parseScanner . splitOn [""] . lines
@@ -15,7 +16,7 @@ parseInput = map parseScanner . splitOn [""] . lines
 
 type Vector = (Int, Int, Int)
 
-type Vectors = [Vector]
+type Vectors = Set Vector
 
 type Matrix = (Vector, Vector, Vector)
 
@@ -95,7 +96,7 @@ toVector :: [Int] -> Vector
 toVector xs = (head xs, head . tail $ xs, last xs)
 
 toVectors :: [[Int]] -> Vectors
-toVectors = map toVector
+toVectors = fromList . map toVector
 
 toScan :: [[Int]] -> Scan
 toScan xs = (positionVector, [], beacons)
@@ -135,11 +136,11 @@ rotate :: Rotation -> Vector -> Vector
 rotate rotation vector = (`mvMult` vector) . toMatrix $ rotation
 
 rotateAll :: Rotation -> Vectors -> Vectors
-rotateAll rotation = map (mvMult . toMatrix $ rotation)
+rotateAll rotation = fromList . map (mvMult . toMatrix $ rotation) . toList
 
 rotateAllBy :: [Rotation] -> Vectors -> Vectors
 rotateAllBy [] vectors = vectors
-rotateAllBy rotations vectors = rotateAllBy (init rotations) . map (mvMult . toMatrix $ rotation) $ vectors
+rotateAllBy rotations vectors = rotateAllBy (init rotations) . fromList . map (mvMult . toMatrix $ rotation) . toList $ vectors
   where
     rotation = last rotations
 
@@ -147,9 +148,9 @@ rotateScan :: Rotation -> Scan -> Scan
 rotateScan rotationMatrix (position, rotations, beacons) =
   (position, rotations ++ [rotationMatrix], movedBeacons)
   where
-    relativeBeacons = map (`subtract` position) beacons
-    rotatedBeacons = rotateAll rotationMatrix relativeBeacons
-    movedBeacons = map (`add` position) rotatedBeacons
+    relativeBeacons = fromList . map (`subtract` position) . toList $ beacons :: Vectors
+    rotatedBeacons = rotateAll rotationMatrix relativeBeacons :: Vectors
+    movedBeacons = fromList . map (`add` position) . toList $ rotatedBeacons
 
 rotateScanBy :: [Rotation] -> Scan -> Scan
 rotateScanBy [] scan = scan
@@ -159,9 +160,10 @@ revertRotations :: [Rotation] -> Scan -> Scan
 revertRotations rotations scan = foldl (flip rotateScan) scan . map invert $ rotations
 
 moveScan :: Vector -> Scan -> Scan
-moveScan position scan = (scannerPosition `add` position, rotation, map (`add` position) beacons)
+moveScan position scan = (scannerPosition `add` position, rotation, newBeacons)
   where
     (scannerPosition, rotation, beacons) = scan
+    newBeacons = fromList . map (`add` position) . toList $ beacons
 
 rotateScanX :: Scan -> Scan
 rotateScanX = rotateScan rotation
@@ -188,10 +190,12 @@ rotationsZ :: Scan -> [Scan]
 rotationsZ = take 4 . iterate rotateScanZ
 
 subtractAllBy :: Vector -> Scan -> Scan
-subtractAllBy vector (position, rotation, beacons) = (subtract position vector, rotation, map (subtract vector) beacons)
+subtractAllBy vector (position, rotation, beacons) = (subtract position vector, rotation, newBeacons)
+  where
+    newBeacons = fromList . map (subtract vector) . toList $ beacons
 
 relativePositions :: Scan -> [Scan]
-relativePositions scan = scanl (\_ beacon -> subtractAllBy beacon scan) scan . sortBy (flip (\v1 v2 -> compare (distance v1) (distance v2))) $ beacons
+relativePositions scan = scanl (\_ beacon -> subtractAllBy beacon scan) scan . sortBy (flip (\v1 v2 -> compare (distance v1) (distance v2))) . toList $ beacons
   where
     (scannerPosition, _, beacons) = scan
 
@@ -204,10 +208,11 @@ allPositions scan =
     $ [scan]
 
 haveOverlapping :: Scan -> Scan -> Bool
-haveOverlapping scan0 scan1 = (>= 12) . length . filter (`elem` beacons1) $ beacons0
+haveOverlapping scan0 scan1 = (>= 12) . length $ overlapping
   where
     (_, _, beacons0) = scan0
     (_, _, beacons1) = scan1
+    overlapping = (`intersection` beacons1) beacons0 :: Vectors
 
 findOverlapping :: Scan -> Scan -> Maybe (Scan, Scan)
 findOverlapping scan0 scan1
@@ -240,17 +245,18 @@ beaconsFrom :: Scan -> Vectors
 beaconsFrom (_, _, beacons) = beacons
 
 absoluteBeaconPositions :: [Scan] -> Vectors
-absoluteBeaconPositions (scan0 : scans) = nub . (scan0Beacons ++) . search $ ([scan0], scans)
+absoluteBeaconPositions (scan0 : scans) = (scan0Beacons `union`) . search $ ([scan0], scans)
   where
     scan0Beacons = beaconsFrom scan0 :: Vectors
 
     search :: ([Scan], [Scan]) -> Vectors
-    search (_, []) = []
-    search (scan0 : otherScans, open) = nub . ((concatMap beaconsFrom found) ++) $ search (otherScans ++ found, newOpen)
+    search (_, []) = empty
+    search (scan0 : otherScans, open) = (foundBeacons `union`) $ search (otherScans ++ found, newOpen)
       where
         scannerPositions = map (\o -> (o, relativeScannerPositions scan0 o)) open :: [(Scan, Maybe Scan)]
         found = map (fromJust . snd) . filter (isJust . snd) $ scannerPositions :: [Scan]
         newOpen = map (fst) . filter (isNothing . snd) $ scannerPositions :: [Scan]
+        foundBeacons = foldl union empty (map beaconsFrom found) :: Vectors
 
 howManyBeacons :: String -> Int
 howManyBeacons input = length . absoluteBeaconPositions $ scans
